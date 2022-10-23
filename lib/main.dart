@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'CiguEuro',
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Bienvenue dans CiguEuro'),
+          title: const Text('Name Generator'),
         ),
         body: Center(
           child: RandomWords(),
@@ -31,10 +31,27 @@ class RandomWords extends StatefulWidget {
 }
 
 class _RandomWordsState extends State<RandomWords> {
+  final _suggestions = <WordPair>[];
+  final _biggerfont = const TextStyle(fontSize: 20);
+
   @override
-  Widget build(BuildContext context) {
-    final wordPair = WordPair.random();
-    return Text(wordPair.asCamelCase,
-    style: const TextStyle(fontSize: 50));
-  }
+Widget build(BuildContext context) {
+  return ListView.builder(
+    padding: const EdgeInsets.all(20.0),
+    itemBuilder:  (context, i) { /*Le item builder est rappeler a chaque ligne*/
+      if (i.isOdd) return const Divider(); /* Divider sert aseparer chaque ligne*/
+
+      final index = i ~/ 2; /*C'est pour dire que quand tu divise par  ca renvoit toujours un entier ex 7/2 = 3*/
+      if (index >= _suggestions.length) {
+        _suggestions.addAll(generateWordPairs().take(10)); 
+      }
+      return ListTile(
+        title: Text(
+          _suggestions[index].asPascalCase,
+          style: _biggerfont,
+        ),
+      );
+    },
+  );
+}
 }
