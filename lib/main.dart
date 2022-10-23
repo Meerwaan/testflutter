@@ -10,21 +10,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'CiguEuro',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Name Generator'),
-        ),
-        body: Center(
-          child: RandomWords(),
-        ),
-      ),
+      home: RandomWords(),
     );
   }
 }
 
 class RandomWords extends StatefulWidget {
+  const RandomWords({super.key});
+
   @override
   _RandomWordsState createState() => _RandomWordsState();
 }
@@ -33,10 +28,53 @@ class _RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
   final _saved = <WordPair>{};
   final _biggerfont = const TextStyle(fontSize: 20);
+  void _pushSaved(){
+    Navigator.of(context).push(
+      // Add lines from here...
+      MaterialPageRoute<void>(
+        builder: (context) {
+          final tiles = _saved.map(
+            (pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: _biggerfont,
+                ),
+              );
+            },
+          );
+          final divided = tiles.isNotEmpty
+              ? ListTile.divideTiles(
+                  context: context,
+                  tiles: tiles,
+                ).toList()
+              : <Widget>[];
+
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Saved Suggestions'),
+            ),
+            body: ListView(children: divided),
+          );
+        },
+      ), 
+    );
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return Scaffold( appBar: AppBar(  
+        title: const Text('Name Generator'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.list),
+            onPressed: _pushSaved,
+            tooltip: 'Saved Suggestions',
+          ),
+        ],
+      ),          
+      body: ListView.builder(
       padding: const EdgeInsets.all(20.0),
       itemBuilder: (context, i) {
         /*Le item builder est rappeler a chaque ligne*/
@@ -68,6 +106,6 @@ class _RandomWordsState extends State<RandomWords> {
           },
         );
       },
-    );
+    ));
   }
 }
